@@ -7,7 +7,7 @@ exports.getCounter = (req, res) => {
 };
 
 exports.incrementCounter = (req, res) => {
-  counter += 25;
+  counter += 20;
   res.json({ value: counter });
 };
 
