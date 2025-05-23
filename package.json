@@ -3,20 +3,23 @@
     "version": "1.0.0",
     "private": true,
     "workspaces": [
-      "packages/*"
+        "packages/*"
     ],
     "scripts": {
-      "install:all": "npm install && npm run install:frontend && npm run install:backend",
-      "install:frontend": "cd packages/frontend && npm install",
-      "install:backend": "cd packages/backend && npm install",
-      "start:frontend": "cd packages/frontend && npm start",
-      "start:backend": "cd packages/backend && npm start",
-      "dev:frontend": "cd packages/frontend && npm start",
-      "dev:backend": "cd packages/backend && npm run dev",
-      "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-      "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+        "install:all": "npm install && npm run install:frontend && npm run install:backend",
+        "install:frontend": "cd packages/frontend && npm install",
+        "install:backend": "cd packages/backend && npm install",
+        "start:frontend": "cd packages/frontend && npm start",
+        "start:backend": "cd packages/backend && npm start",
+        "dev:frontend": "cd packages/frontend && npm start",
+        "dev:backend": "cd packages/backend && npm run dev",
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
     },
     "devDependencies": {
-      "concurrently": "^8.2.0"
+        "concurrently": "^8.2.0"
+    },
+    "dependencies": {
+        "counter-monorepo": "file:"
     }
-  }
+}

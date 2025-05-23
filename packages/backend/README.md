@@ -1,38 +1,85 @@
-# Counter Backend
+# Counter Monorepo
 
-A simple Node.js Express server that manages a counter state.
+A simple monorepo containing a React frontend and Node.js backend for a counter application.
 
-## API Endpoints
+## Project Structure
 
-- `GET /api/counter` - Get the current counter value
-- `POST /api/counter/increment` - Increment the counter
-- `POST /api/counter/decrement` - Decrement the counter
-- `POST /api/counter/reset` - Reset the counter to zero
-- `GET /health` - Health check endpoint
+```
+counter-monorepo/
+├── docker-compose.yml
+├── docker-compose.prod.yml
+├── package.json
+├── packages/
+│   ├── backend/
+│   │   ├── Dockerfile
+│   │   ├── Dockerfile.prod
+│   │   ├── package.json
+│   │   └── src/
+│   │       ├── index.js
+│   │       └── controllers/
+│   │           └── counterController.js
+│   └── frontend/
+│       ├── Dockerfile
+│       ├── Dockerfile.prod
+│       ├── nginx.conf
+│       ├── package.json
+│       ├── public/
+│       │   └── index.html
+│       └── src/
+│           ├── App.js
+│           ├── App.css
+│           ├── index.js
+│           ├── index.css
+│           └── components/
+│               ├── Counter.js
+│               └── Counter.css
+```
 
-## Setup
+## Development with Docker
+
+### Start the Development Environment
 
 ```bash
-npm install
+docker-compose up -d
 ```
 
-## Environment Variables
+This will:
+- Start both frontend and backend services
+- Mount your local code into the containers
+- Enable hot-reloading for both services
 
-Create a `.env` file with the following variables:
-```
-PORT=3001
-```
+### View Logs
 
-## Running
-
-Development mode with auto-reload:
 ```bash
-npm run dev
+docker-compose logs -f
 ```
 
-Production mode:
+### Stop the Development Environment
+
 ```bash
-npm start
+docker-compose down
 ```
 
-The server will run on http://localhost:3001 by default.
+## Real-time Development Workflow
+
+1. Make changes to your code locally
+2. The changes will be automatically detected
+3. Frontend changes will trigger a hot reload
+4. Backend changes will restart the Node.js server via nodemon
+
+No need to rebuild Docker images or restart containers!
+
+## Production Deployment
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+## CI/CD Pipeline
+
+The GitHub Actions workflow will:
+1. Build Docker images for both services
+2. Push the images to Docker Hub
+3. Deploy to your environment
+
+For development environments, code changes are reflected in real-time through volume mounts.

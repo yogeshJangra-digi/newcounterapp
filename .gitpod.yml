@@ -1,0 +1,17 @@
+image: gitpod/workspace-full
+
+tasks:
+  - name: Docker Compose Backend
+    init: |
+      echo "Building backend container..."
+    command: |
+      docker-compose -f gitpod-docker-compose.yml up
+
+ports:
+  - port: 3001
+    onOpen: open-browser
+    visibility: public
+
+vscode:
+  extensions:
+    - ms-azuretools.vscode-docker

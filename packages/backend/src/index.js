@@ -12,8 +12,12 @@ try {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
+
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? 'https://your-production-frontend.com'
+    : '*'
+}));
 app.use(express.json());
 
 // Routes
@@ -24,10 +28,29 @@ app.post('/api/counter/reset', counterController.resetCounter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({
+    status: 'ok',
+    message: 'Volume mounting is working!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Add an info endpoint to show the Gitpod workspace URL
+app.get('/info', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    environment: process.env.NODE_ENV,
+    gitpodWorkspace: process.env.GITPOD_WORKSPACE_URL || 'Not running on Gitpod'
+  });
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Backend server running on http://0.0.0.0:${PORT}`);
+
+  if (process.env.GITPOD_WORKSPACE_URL) {
+    const gitpodUrl = process.env.GITPOD_WORKSPACE_URL.replace('https://', 'https://3001-');
+    console.log(`Gitpod public URL: ${gitpodUrl}`);
+  }
 });
+
