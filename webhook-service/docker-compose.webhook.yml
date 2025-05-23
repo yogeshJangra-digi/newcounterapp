@@ -1,0 +1,20 @@
+services:
+  webhook:
+    build: 
+      context: https://github.com/yourusername/webhook-service.git
+      # Or use a pre-built image:
+      # image: yourusername/webhook-service:latest
+    ports:
+      - "3002:3002"
+    environment:
+      - WEBHOOK_SECRET=your-webhook-secret
+      - REPO_PATH=/workspace
+      - GIT_BRANCH=main
+      # Comma-separated list of files to touch when changes are detected
+      - TOUCH_PATHS=src/index.js,server.js
+      # Optional custom command to restart nodemon
+      # - NODEMON_RESTART_CMD=docker exec your-container-name touch /app/src/index.js
+      - DEBUG=false
+    volumes:
+      # Mount the repository root to /workspace
+      - .:/workspace

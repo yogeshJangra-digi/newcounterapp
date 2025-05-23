@@ -13,7 +13,7 @@ services:
       - PORT=3001
       - NODE_ENV=development
       - GITPOD_WORKSPACE_URL=${GITPOD_WORKSPACE_URL}
-    command: npx nodemon src/index.js
+    command: npx nodemon --legacy-watch src/index.js
 
 volumes:
   backend-node-modules:

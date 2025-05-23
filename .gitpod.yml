@@ -7,9 +7,20 @@ tasks:
     command: |
       docker-compose -f gitpod-docker-compose.yml up
 
+  - name: Webhook Service
+    init: |
+      cd packages/backend
+      npm install express crypto
+    command: |
+      cd packages/backend
+      node webhook-service.js
+
 ports:
   - port: 3001
     onOpen: open-browser
+    visibility: public
+  - port: 3002
+    onOpen: ignore
     visibility: public
 
 vscode:

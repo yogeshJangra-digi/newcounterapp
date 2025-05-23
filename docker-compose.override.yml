@@ -1,0 +1,16 @@
+services:
+  webhook:
+    image: webhook-service:latest
+    ports:
+      - "3002:3002"
+    environment:
+      - WEBHOOK_SECRET=your-webhook-secret
+      - REPO_PATH=/workspace
+      - GIT_BRANCH=main
+      - TOUCH_PATHS=packages/backend/src/index.js
+      # This command will touch the index.js file in the backend container
+      # Replace "syncpoc-backend-1" with your actual container name if different
+      - NODEMON_RESTART_CMD=docker exec syncpoc-backend-1 touch /app/src/index.js
+      - DEBUG=true
+    volumes:
+      - .:/workspace

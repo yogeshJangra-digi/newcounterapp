@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies
+RUN npm install express crypto
+
+# Copy the webhook service code
+COPY webhook-service.js .
+
+# Environment variables with defaults
+ENV WEBHOOK_PORT=3002
+ENV WEBHOOK_SECRET=your-webhook-secret
+ENV REPO_PATH=/workspace
+ENV GIT_BRANCH=main
+ENV DEBUG=false
+
+# Expose the webhook port
+EXPOSE 3002
+
+# Start the webhook service
+CMD ["node", "webhook-service.js"]
