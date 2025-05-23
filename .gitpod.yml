@@ -9,10 +9,10 @@ tasks:
 
   - name: Webhook Service
     init: |
-      cd packages/backend
+      cd webhook-service
       npm install express crypto
     command: |
-      cd packages/backend
+      cd webhook-service
       node webhook-service.js
 
 ports:
