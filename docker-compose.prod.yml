@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./packages/backend:/app
+      - backend-node-modules:/app/node_modules
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+    command: npx nodemon --legacy-watch src/index.js
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  webhook:
+    build:
+      context: ./webhook-service
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-your-webhook-secret}
+      - REPO_PATH=/workspace
+      - GIT_BRANCH=${GIT_BRANCH:-main}
+      - TOUCH_PATHS=packages/backend/src/index.js
+      - NODEMON_RESTART_CMD=docker exec syncpoc_backend_1 touch /app/src/index.js
+      - DEBUG=${DEBUG:-false}
+    volumes:
+      - .:/workspace
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+volumes:
+  backend-node-modules:
+
+networks:
+  app-network:
+    driver: bridge

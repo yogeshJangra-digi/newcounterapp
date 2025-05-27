@@ -26,3 +26,4 @@ yarn-error.log*
 .vscode/
 *.sublime-project
 *.sublime-workspace
+devops-poc.pem
