@@ -5,6 +5,10 @@ WORKDIR /app
 # Install git and other dependencies
 RUN apk add --no-cache git
 
+# Configure git to trust the workspace directory
+RUN git config --global --add safe.directory /workspace
+RUN git config --global --add safe.directory '*'
+
 # Install Node.js dependencies
 RUN npm install express crypto
 
