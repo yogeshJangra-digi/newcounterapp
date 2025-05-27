@@ -14,9 +14,7 @@ const PORT = process.env.PORT || 3001;
 
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://your-production-frontend.com'
-    : '*'
+  origin: '*' // Allow all origins for testing
 }));
 app.use(express.json());
 
