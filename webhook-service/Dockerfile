@@ -2,7 +2,10 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install dependencies
+# Install git and other dependencies
+RUN apk add --no-cache git
+
+# Install Node.js dependencies
 RUN npm install express crypto
 
 # Copy the webhook service code
