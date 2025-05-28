@@ -150,44 +150,9 @@ check_health() {
 update_code() {
     print_header "Updating Code"
 
-    # Sync files
-    print_status "Syncing files..."
-
-    # Check if rsync is available, if not use scp with tar
-    if command -v rsync &> /dev/null; then
-        print_status "Using rsync for file transfer..."
-        rsync -avz --progress \
-            --exclude 'node_modules' \
-            --exclude '.git' \
-            --exclude '*.log' \
-            --exclude '.env' \
-            --exclude 'devops-poc.pem' \
-            -e "ssh -i $KEY_FILE" \
-            "./" "$EC2_HOST:$REMOTE_DIR/"
-    else
-        print_status "rsync not found, using tar + scp for file transfer..."
-
-        # Create a temporary tar file excluding unnecessary files
-        print_status "Creating temporary archive..."
-        tar --exclude='node_modules' \
-            --exclude='.git' \
-            --exclude='*.log' \
-            --exclude='.env' \
-            --exclude='devops-poc.pem' \
-            -czf /tmp/syncpoc-update.tar.gz -C "." .
-
-        # Transfer the tar file
-        print_status "Transferring files..."
-        scp -i "$KEY_FILE" /tmp/syncpoc-update.tar.gz "$EC2_HOST:/tmp/"
-
-        # Extract on remote server
-        print_status "Extracting files on remote server..."
-        ssh -i "$KEY_FILE" "$EC2_HOST" "cd $REMOTE_DIR && tar -xzf /tmp/syncpoc-update.tar.gz && rm /tmp/syncpoc-update.tar.gz"
-
-        # Clean up local temp file
-        rm -f /tmp/syncpoc-update.tar.gz
-        print_status "File transfer completed"
-    fi
+    # Pull latest code from GitHub
+    print_status "Pulling latest code from GitHub..."
+    exec_remote "git fetch origin main && git reset --hard origin/main"
 
     # Restart containers
     restart_containers

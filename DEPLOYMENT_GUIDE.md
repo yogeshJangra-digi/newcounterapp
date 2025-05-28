@@ -23,7 +23,8 @@ chmod +x manage-backend.sh
 
 This script will:
 - Install Docker and Docker Compose on EC2 (if not already installed)
-- Sync your code to the EC2 instance
+- Clone your code directly from GitHub to the EC2 instance
+- Configure git for webhook operations
 - Build and start the backend and webhook containers
 - Display the application URLs
 

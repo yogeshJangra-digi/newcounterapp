@@ -18,6 +18,24 @@ services:
     networks:
       - app-network
 
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/frontend:/app
+      - frontend-node-modules:/app/node_modules
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://15.206.100.79:3001/api
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
   webhook:
     build:
       context: ./webhook-service
@@ -28,7 +46,7 @@ services:
       - WEBHOOK_SECRET=${WEBHOOK_SECRET:-your-webhook-secret}
       - REPO_PATH=/workspace
       - GIT_BRANCH=${GIT_BRANCH:-main}
-      - TOUCH_PATHS=packages/backend/src/index.js
+      - TOUCH_PATHS=packages/backend/src/index.js,packages/frontend/src/index.js
       - NODEMON_RESTART_CMD=docker exec syncpoc_backend_1 touch /app/src/index.js
       - DEBUG=${DEBUG:-false}
     volumes:
@@ -41,6 +59,7 @@ services:
 
 volumes:
   backend-node-modules:
+  frontend-node-modules:
 
 networks:
   app-network:

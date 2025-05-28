@@ -49,48 +49,30 @@ if ! ssh -i "$KEY_FILE" -o ConnectTimeout=10 "$EC2_HOST" "echo 'SSH connection s
     exit 1
 fi
 
-# Create remote directory if it doesn't exist
-print_status "Creating remote directory structure..."
-ssh -i "$KEY_FILE" "$EC2_HOST" "mkdir -p $REMOTE_DIR"
+# Clone repository from GitHub
+print_status "Cloning repository from GitHub..."
+ssh -i "$KEY_FILE" "$EC2_HOST" << 'EOF'
+    # Remove existing directory if it exists
+    if [ -d "/home/ubuntu/syncPOC" ]; then
+        echo "Removing existing syncPOC directory..."
+        rm -rf /home/ubuntu/syncPOC
+    fi
 
-# Sync files to EC2 (excluding node_modules and other unnecessary files)
-print_status "Syncing files to EC2..."
+    # Clone the repository
+    echo "Cloning repository from GitHub..."
+    cd /home/ubuntu
+    git clone https://github.com/yogeshJangra-digi/newcounterapp.git syncPOC
 
-# Check if rsync is available, if not use scp with tar
-if command -v rsync &> /dev/null; then
-    print_status "Using rsync for file transfer..."
-    rsync -avz --progress \
-        --exclude 'node_modules' \
-        --exclude '.git' \
-        --exclude '*.log' \
-        --exclude '.env' \
-        --exclude 'devops-poc.pem' \
-        -e "ssh -i $KEY_FILE" \
-        "$LOCAL_DIR/" "$EC2_HOST:$REMOTE_DIR/"
-else
-    print_status "rsync not found, using tar + scp for file transfer..."
+    # Navigate to the cloned directory
+    cd syncPOC
 
-    # Create a temporary tar file excluding unnecessary files
-    print_status "Creating temporary archive..."
-    tar --exclude='node_modules' \
-        --exclude='.git' \
-        --exclude='*.log' \
-        --exclude='.env' \
-        --exclude='devops-poc.pem' \
-        -czf /tmp/syncpoc-deploy.tar.gz -C "$LOCAL_DIR" .
+    # Configure git for webhook operations
+    git config pull.rebase false
+    git config user.name "yogeshJangra-digi"
+    git config user.email "yogeshjangra@digitalmettle.com"
 
-    # Transfer the tar file
-    print_status "Transferring files..."
-    scp -i "$KEY_FILE" /tmp/syncpoc-deploy.tar.gz "$EC2_HOST:/tmp/"
-
-    # Extract on remote server
-    print_status "Extracting files on remote server..."
-    ssh -i "$KEY_FILE" "$EC2_HOST" "cd $REMOTE_DIR && tar -xzf /tmp/syncpoc-deploy.tar.gz && rm /tmp/syncpoc-deploy.tar.gz"
-
-    # Clean up local temp file
-    rm -f /tmp/syncpoc-deploy.tar.gz
-    print_status "File transfer completed"
-fi
+    echo "Repository cloned and configured successfully"
+EOF
 
 # Install Docker and Docker Compose on EC2 if not already installed
 print_status "Setting up Docker on EC2..."
