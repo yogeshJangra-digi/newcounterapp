@@ -167,7 +167,7 @@ echo "  http://$EC2_IP:3002/webhook"
 
 print_warning "Make sure to:"
 print_warning "1. Update your GitHub webhook URL to: http://$EC2_IP:3002/webhook"
-print_warning "2. Configure your EC2 security group to allow inbound traffic on ports 3001 and 3002"
+print_warning "2. Configure your EC2 security group to allow inbound traffic on ports 3000, 3001, and 3002"
 print_warning "3. Update the WEBHOOK_SECRET in the .env file on the server"
 
 print_status "Deployment script completed successfully!"
